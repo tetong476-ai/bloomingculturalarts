@@ -1,0 +1,94 @@
+/* BCA Custom Styles */
+:root {
+  --bca-pink: #FDF2F4;
+  --bca-gold: #EBB838;
+  --bca-gold-dark: #d4a42e;
+  --bca-green: #6B8F71;
+  --bca-dark: #2D2D2D;
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Hero gradient overlay */
+.hero-overlay {
+  background: linear-gradient(135deg, rgba(45,45,45,0.75) 0%, rgba(107,143,113,0.5) 100%);
+}
+
+/* Gold button */
+.btn-gold {
+  background-color: var(--bca-gold);
+  color: #fff;
+  transition: background-color 0.2s, transform 0.1s;
+}
+.btn-gold:hover {
+  background-color: var(--bca-gold-dark);
+  transform: translateY(-1px);
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 1s ease-in-out;
+}
+
+/* Gallery item hover */
+.gallery-item {
+  overflow: hidden;
+  cursor: pointer;
+}
+.gallery-item img {
+  transition: transform 0.4s ease;
+}
+.gallery-item:hover img {
+  transform: scale(1.08);
+}
+
+/* Lightbox */
+#lightbox {
+  backdrop-filter: blur(4px);
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-card {
+  animation: countUp 0.6s ease forwards;
+}
+
+/* Nav link underline */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 2px;
+  background: var(--bca-gold);
+  transition: width 0.3s;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* Admin sidebar active */
+.sidebar-link.active {
+  background-color: var(--bca-gold);
+  color: #fff;
+}
+
+/* Flash messages */
+.flash-success { background: #d1fae5; border-left: 4px solid #10b981; color: #065f46; }
+.flash-error   { background: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; }
+.flash-info    { background: #dbeafe; border-left: 4px solid #3b82f6; color: #1e40af; }
+
+/* Modal */
+.modal-backdrop {
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: var(--bca-gold); border-radius: 3px; }
