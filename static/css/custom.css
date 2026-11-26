@@ -1228,15 +1228,18 @@ html { scroll-behavior: smooth; }
   .nav-reference-search { align-self: stretch; }
 }
 @media (min-width: 1680px) {
-  .site-navigation { --nav-action-font-size: 1.95rem; }
-  .nav-reference-links { gap: 3rem; margin-right: 1rem; }
+  .site-navigation { --nav-action-font-size: clamp(1rem, .9vw, 1.25rem); }
+  .nav-brand { min-width: 17rem; }
+  .nav-brand-logo { width: 17rem; }
+  .nav-reference-links { gap: clamp(.85rem, 1.2vw, 1.75rem); margin-right: 1rem; }
   .nav-reference-actions { min-width: 0; }
+  .nav-reference-bottom { gap: .75rem; }
   .nav-reference-join,
   .nav-reference-support { padding-right: .8rem; padding-left: .8rem; }
   .nav-reference-join,
   .nav-reference-search {
-    width: 8.3rem;
-    flex: 0 0 8.3rem;
+    width: 7.5rem;
+    flex: 0 0 7.5rem;
   }
   .nav-reference-search { align-self: stretch; }
 }
