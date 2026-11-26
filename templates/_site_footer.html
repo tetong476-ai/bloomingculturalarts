@@ -1,0 +1,56 @@
+<footer class="bca-footer">
+  <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-6">
+    <div class="bca-footer-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <img class="bca-footer-brand" src="/static/images/bca-footer-text.png" alt="{{ settings.get('site_title', 'Blooming Cultural Arts') }}">
+        <p class="bca-footer-description mt-2 text-sm leading-relaxed text-gray-800">Dedicated to protecting our cultural heritage and empowering communities in Cambodia through artistic and educational initiatives.</p>
+      </div>
+
+      <div>
+        <h2 class="bca-footer-heading">Quick Links</h2>
+        <ul class="mt-1 space-y-1 text-sm text-gray-900">
+          <li><a href="{{ home_url }}" class="bca-footer-link">Home</a></li>
+          <li><a href="{{ about_url }}" class="bca-footer-link">About Us</a></li>
+          <li><a href="{{ campaigns_url }}" class="bca-footer-link">Our Future Projects</a></li>
+          <li><a href="{{ home_url }}#gallery" class="bca-footer-link">Photo Activities</a></li>
+          <li><a href="{{ home_url }}#contact" class="bca-footer-link">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="bca-footer-heading">Get Involved</h2>
+        <ul class="mt-1 space-y-1 text-sm text-gray-900">
+          <li><a href="{{ url_for('join_page') }}" class="bca-footer-link">Join Us</a></li>
+          <li><a href="{{ home_url }}#contact" class="bca-footer-link">Partner With Us</a></li>
+          <li><a href="{{ home_url }}#contact" class="bca-footer-link">Request Proposal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="bca-footer-heading">Contact Us</h2>
+        <ul class="mt-1 space-y-1 text-sm text-gray-900">
+          <li>{{ settings.get('address', 'Phnom Penh, Cambodia') }}</li>
+          {% set footer_phone = settings.get('phone', '+85512 345 678') %}
+          <li><a href="tel:{{ footer_phone|replace(' ', '') }}" class="bca-footer-link">{{ footer_phone }}</a></li>
+          {% set footer_email = settings.get('contact_email', 'info@bloomingculturalarts.org') %}
+          <li>{% if '@' in footer_email %}<a href="mailto:{{ footer_email }}" class="bca-footer-link break-all">{{ footer_email }}</a>{% else %}<span class="break-all">{{ footer_email }}</span>{% endif %}</li>
+        </ul>
+        <div class="mt-2 flex gap-3">
+          {% if settings.get('facebook_url') %}
+          <a href="{{ settings.get('facebook_url', '') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-facebook" aria-label="Facebook">f</a>
+          {% endif %}
+          <a href="{{ settings.get('telegram_url', 'https://t.me/JUDY_Supporter') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-telegram" aria-label="Telegram">➤</a>
+          {% if settings.get('tiktok_url') %}
+          <a href="{{ settings.get('tiktok_url', '') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-tiktok" aria-label="TikTok">♪</a>
+          {% endif %}
+          <a href="{{ settings.get('instagram_url', 'https://www.instagram.com/bloomingculturalarts/') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-instagram" aria-label="Instagram">◎</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="bca-footer-bottom mt-5 pt-2 flex flex-col gap-2 text-xs text-gray-800 sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; <span data-current-year>2026</span> {{ settings.get('site_title', 'Blooming Cultural Arts') }} (BCA). All rights reserved.</p>
+      <p class="flex gap-4"><span>Privacy Policy</span><span aria-hidden="true">|</span><span>Terms of Service</span></p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,38 @@
+<!-- ===== KHQR DONATION MODAL ===== -->
+<div id="khqr-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+  <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden">
+    <div class="bg-gradient-to-r from-amber-400 to-amber-500 p-6 text-center">
+      <h3 class="text-2xl font-bold text-white"> Donate via KHQR</h3>
+      <p class="text-amber-100 text-sm mt-1">Scan the QR code to make your donation</p>
+    </div>
+    <div class="p-6 text-center">
+      <img src="{{ settings.get('khqr_image_url', '') }}"
+           alt="KHQR Donation Code"
+           class="w-56 h-56 mx-auto rounded-xl shadow-md object-contain border-4 border-amber-100"
+           onerror="this.src='https://via.placeholder.com/300x300/FDF2F4/EBB838?text=KHQR'">
+      <p class="text-gray-600 text-sm mt-4 leading-relaxed">
+        Open your banking app, tap <strong>Scan QR</strong>, and scan the code above to donate.
+      </p>
+      <p class="text-gray-500 text-xs mt-2">After paying, send your receipt to our admin for confirmation.</p>
+      <button id="show-donation-form" type="button" class="mt-4 w-full rounded-xl bg-amber-500 py-2.5 font-semibold text-white hover:bg-amber-600">
+        I have paid - Upload receipt
+      </button>
+      <form id="donation-form" class="hidden mt-4 space-y-3 text-left">
+        <input name="donor_name" type="text" required placeholder="Your name"
+               class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-amber-400 focus:outline-none">
+        <label class="block text-sm text-gray-600">
+          Upload payment receipt <span class="text-red-500">*</span>
+          <input name="proof_file" type="file" accept="image/*" required
+                 class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-amber-400 focus:outline-none">
+        </label>
+        <p id="donation-message" class="hidden text-center text-sm" role="status"></p>
+        <button type="submit" class="w-full rounded-xl bg-amber-500 py-2.5 font-semibold text-white hover:bg-amber-600">
+          Save Donation
+        </button>
+      </form>
+      <button id="close-khqr" onclick="closeDonateModal()" class="mt-6 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold transition-colors">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

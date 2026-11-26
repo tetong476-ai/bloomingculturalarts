@@ -1,0 +1,45 @@
+<section id="join" class="join-page-hero" aria-labelledby="join-page-title">
+  <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}" alt="Children sharing a joyful moment">
+  <div class="join-page-hero-overlay"></div>
+  <div class="join-page-hero-content">
+    <p>Join Us</p>
+    <h1 id="join-page-title">Join Our Community<br>&amp; Support Our Mission</h1>
+    <span>Help us connect with schools in need and fund opportunities to empower Cambodian children.</span>
+  </div>
+</section>
+<section id="join-community" class="join-community-section" aria-labelledby="join-community-title">
+  <div class="join-community-inner">
+    <div class="join-community-copy">
+      <p class="join-community-eyebrow">Community Support</p>
+      <h2 id="join-community-title">How You Can Support<br>&amp; Connect With Us</h2>
+      <p>We invite community members and supporters to join hands with BCA by helping us identify schools in need, connecting us with potential sponsors, and following our transparent field visits across Cambodia.</p>
+      <div class="join-community-options">
+        <article><span aria-hidden="true">⌂</span><div><h3>Recommend a School in Need</h3><p>Tell us about schools or communities needing educational support for future charity visits.</p></div></article>
+        <article><span aria-hidden="true">♡</span><div><h3>Connect Us With Partners and Sponsors</h3><p>Share information about potential donors or organizations willing to support charity projects.</p></div></article>
+        <article><span aria-hidden="true">◎</span><div><h3>Connect Us With Sponsors</h3><p>Share information about potential donors or organizations willing to support charity projects.</p></div></article>
+      </div>
+      <p class="join-community-social-title">Follow us on social media</p>
+      <div class="flex gap-3">
+        {% if settings.get('facebook_url') %}<a href="{{ settings.get('facebook_url') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-facebook" aria-label="Facebook">f</a>{% endif %}
+        <a href="{{ settings.get('telegram_url', 'https://t.me/JUDY_Supporter') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-telegram" aria-label="Telegram">➤</a>
+        {% if settings.get('tiktok_url') %}<a href="{{ settings.get('tiktok_url') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-tiktok" aria-label="TikTok">♪</a>{% endif %}
+        <a href="{{ settings.get('instagram_url', 'https://www.instagram.com/bloomingculturalarts/') }}" target="_blank" rel="noopener noreferrer" class="bca-social-icon bca-social-instagram" aria-label="Instagram">◎</a>
+      </div>
+    </div>
+    <form class="join-community-form" action="mailto:{{ settings.get('contact_email', 'info@bloomingculturalarts.org') }}" method="post" enctype="text/plain">
+      <h2>Share a Lead or Support BCA</h2>
+      <input type="text" name="name" placeholder="Enter Your Name*" aria-label="Your name" required>
+      <input type="email" name="email" placeholder="Email Address*" aria-label="Email address" required>
+      <fieldset><legend>How would you like to help?*</legend>
+        <label><input type="checkbox" name="interest" value="Suggest a School"> Suggest a School / Community in Need</label>
+        <label><input type="checkbox" name="interest" value="Partner / Collaborate"> Partner / Collaborate With BCA</label>
+        <label><input type="checkbox" name="interest" value="Sponsor / Funding"> Refer a Sponsor / Funding Opportunity</label>
+        <label><input type="checkbox" name="interest" value="Visit Inquiry"> Direct Donation / Field Visit Inquiry</label>
+      </fieldset>
+      <label class="join-community-field-label" for="join-contact">Preferred Contact Method*</label>
+      <textarea id="join-contact" name="contact_method" placeholder="Phone Number: +85512******&#10;WhatsApp: +85512******&#10;Telegram: @BloomingCulturalArts***" required></textarea>
+      <textarea name="details" placeholder="Details (Location, Contact, Message, or what you want to know)***"></textarea>
+      <button type="submit">Send Information</button>
+    </form>
+  </div>
+</section>

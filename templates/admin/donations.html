@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donations - BCA Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+    <div class="flex items-center gap-3">
+      <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
+      {% if settings.get('site_logo') %}
+        <img src="{{ settings.get('site_logo') }}" alt="Blooming Cultural Arts logo" class="w-8 h-8 object-contain rounded-lg">
+      {% else %}
+        <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+      {% endif %}
+      <span class="font-bold text-gray-800">Donation Records</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="{{ url_for('index') }}" class="text-sm text-gray-500 hover:text-amber-500">🌐 View Site</a>
+      <a href="{{ url_for('auth.logout') }}" class="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg">Logout</a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="flash-msg flash-{{ category }} rounded-xl p-4 mb-4 text-sm">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Donations</h1>
+        <p class="text-sm text-gray-500 mt-1">Donations submitted by supporters after KHQR payment.</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-5 py-3 font-semibold text-gray-600">Donor</th>
+            <th class="px-5 py-3 font-semibold text-gray-600">Amount</th>
+            <th class="px-5 py-3 font-semibold text-gray-600">Payment details</th>
+            <th class="px-5 py-3 font-semibold text-gray-600">Transaction ID</th>
+            <th class="px-5 py-3 font-semibold text-gray-600">Date</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for donation in donations %}
+          <tr>
+            <td class="px-5 py-4 font-medium text-gray-800">{{ donation.donor_name }}</td>
+            <td class="px-5 py-4 text-gray-700">See receipt</td>
+            <td class="px-5 py-4">
+              {% if donation.proof_url %}
+              <div class="flex flex-col gap-1">
+                <span class="font-semibold text-green-600">✓ Payment received</span>
+                <a href="{{ donation.proof_url }}" target="_blank" rel="noopener" class="text-amber-600 hover:text-amber-800">
+                  View payment details
+                </a>
+              </div>
+              {% else %}
+              <span class="text-gray-400">Not provided</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-4 text-gray-500">See receipt</td>
+            <td class="px-5 py-4 text-gray-500">{{ donation.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td class="px-5 py-4 text-right">
+              <form method="POST" action="{{ url_for('admin.donation_delete', did=donation.id) }}" class="confirm-delete">
+                <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400">No donations recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

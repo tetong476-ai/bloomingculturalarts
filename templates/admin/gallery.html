@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery Manager - BCA Admin</title>
+  <title>{{ manager_title }} - BCA Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/css/custom.css">
 </head>
@@ -13,11 +13,15 @@
 <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
   <div class="flex items-center gap-3">
     <a href="/admin" class="text-gray-400 hover:text-gray-600">&larr;</a>
-    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
-    <span class="font-bold text-gray-800">Gallery Manager</span>
+    {% if settings.get('site_logo') %}
+      <img src="{{ settings.get('site_logo') }}" alt="Blooming Cultural Arts logo" class="w-8 h-8 object-contain rounded-lg">
+    {% else %}
+      <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+    {% endif %}
+    <span class="font-bold text-gray-800">{{ manager_title }}</span>
   </div>
   <div class="flex items-center gap-4">
-    <a href="/" target="_blank" class="text-sm text-gray-500 hover:text-amber-500">🌐 View Site</a>
+    <a href="{{ url_for('index') }}" target="_self" class="text-sm text-gray-500 hover:text-amber-500">🌐 View Site</a>
     <a href="/logout" class="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg">Logout</a>
   </div>
 </header>
@@ -32,9 +36,9 @@
   {% endwith %}
 
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">🖼️ Gallery Manager</h1>
+    <h1 class="text-2xl font-bold text-gray-800">{{ manager_title }}</h1>
     <button onclick="openEditModal('add-gallery-modal')" class="btn-gold px-5 py-2.5 rounded-xl font-semibold text-sm shadow">
-      + Add Photo
+      + Add {{ 'Activity' if manager_title == 'Recent Activities' else 'Photo' }}
     </button>
   </div>
 
@@ -52,11 +56,17 @@
         <p class="font-semibold text-gray-800 text-xs truncate">{{ item.title }}</p>
         <span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{{ item.category }}</span>
         <div class="flex gap-1 mt-2">
-          <button onclick="editGallery({{ item.id }}, '{{ item.title|replace("'", "\\'") }}', '{{ item.category }}', '{{ item.image_url }}')"
+          <button onclick="editGallery(this)"
+                  data-collection-path="{{ collection_path }}"
+                  data-gallery-id="{{ item.id }}"
+                  data-gallery-title="{{ item.title }}"
+                  data-gallery-category="{{ item.category }}"
+                  data-gallery-image-url="{{ item.image_url }}"
+                  data-gallery-description="{{ item.description or '' }}"
                   class="flex-1 text-xs bg-blue-50 text-blue-600 py-1 rounded-lg hover:bg-blue-100">
             Edit
           </button>
-          <form method="POST" action="/admin/gallery/{{ item.id }}/delete" class="confirm-delete flex-1">
+          <form method="POST" action="{{ url_for(delete_endpoint, gid=item.id) }}" class="confirm-delete flex-1">
             <button type="submit" class="w-full text-xs bg-red-50 text-red-600 py-1 rounded-lg hover:bg-red-100">
               Delete
             </button>
@@ -66,8 +76,8 @@
     </div>
     {% else %}
     <div class="col-span-full text-center py-16 text-gray-400">
-      <p class="text-4xl mb-3">🖼️</p>
-      <p>No gallery items yet. Add your first photo!</p>
+      <p class="text-4xl mb-3"></p>
+      <p>No {{ 'recent activities' if manager_title == 'Recent Activities' else 'gallery photos' }} yet. Add one!</p>
     </div>
     {% endfor %}
   </div>
@@ -77,14 +87,19 @@
 <div id="add-gallery-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="font-bold text-gray-800 text-lg">Add Gallery Photo</h3>
+      <h3 class="font-bold text-gray-800 text-lg">Add {{ 'Activity' if manager_title == 'Recent Activities' else 'Gallery Photo' }}</h3>
       <button onclick="closeEditModal('add-gallery-modal')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
     </div>
-    <form method="POST" action="/admin/gallery/create" enctype="multipart/form-data" class="space-y-4">
+    <form method="POST" action="{{ collection_path }}/create" enctype="multipart/form-data" class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Title</label>
         <input type="text" name="title" placeholder="Photo title"
                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+        <textarea name="description" rows="3" placeholder="Write a short story about this activity"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Category</label>
@@ -107,7 +122,7 @@
                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="submit" class="flex-1 btn-gold py-2.5 rounded-xl font-semibold text-sm">Add Photo</button>
+        <button type="submit" class="flex-1 btn-gold py-2.5 rounded-xl font-semibold text-sm">Add {{ 'Activity' if manager_title == 'Recent Activities' else 'Photo' }}</button>
         <button type="button" onclick="closeEditModal('add-gallery-modal')" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-200">Cancel</button>
       </div>
     </form>
@@ -118,7 +133,7 @@
 <div id="edit-gallery-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="font-bold text-gray-800 text-lg">Edit Gallery Photo</h3>
+      <h3 class="font-bold text-gray-800 text-lg">Edit {{ 'Activity' if manager_title == 'Recent Activities' else 'Gallery Photo' }}</h3>
       <button onclick="closeEditModal('edit-gallery-modal')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
     </div>
     <form id="edit-gallery-form" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -128,10 +143,15 @@
                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
       </div>
       <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+        <textarea name="description" rows="3" placeholder="Write a short story about this activity"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+      </div>
+      <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Category</label>
         <select name="category"
                 class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
-          {% for cat in ['Traditional Dance', 'Music', 'Painting', 'Events'] %}
+          {% for cat in categories %}
           <option value="{{ cat }}">{{ cat }}</option>
           {% endfor %}
         </select>
@@ -155,6 +175,6 @@
   </div>
 </div>
 
-<script src="/static/js/admin.js"></script>
+<script src="/static/js/admin.js?v=20261122"></script>
 </body>
 </html>

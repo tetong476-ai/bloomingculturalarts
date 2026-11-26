@@ -27,9 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('input[type="file"]').forEach(input => {
     input.addEventListener('change', function () {
       const preview = document.getElementById(this.dataset.preview);
-      if (preview && this.files[0]) {
-        preview.src = URL.createObjectURL(this.files[0]);
-        preview.classList.remove('hidden');
+      const file = this.files[0];
+      if (preview && file) {
+        const previewUrl = URL.createObjectURL(file);
+        if (this.dataset.previewType === 'campaign-media') {
+          setCampaignMediaPreview(
+            preview,
+            previewUrl,
+            file.type.startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)
+          );
+        } else {
+          preview.src = previewUrl;
+          preview.classList.remove('hidden');
+        }
       }
     });
   });
@@ -75,6 +85,20 @@ function closeEditModal(modalId) {
   document.getElementById(modalId)?.classList.add('hidden');
 }
 
+function setCampaignMediaPreview(preview, mediaUrl, isVideo) {
+  const media = document.createElement(isVideo ? 'video' : 'img');
+  media.className = 'w-full h-32 object-cover rounded-xl border';
+  media.src = mediaUrl;
+  if (isVideo) {
+    media.controls = true;
+    media.playsInline = true;
+  } else {
+    media.alt = 'Campaign media preview';
+  }
+  preview.replaceChildren(media);
+  preview.classList.remove('hidden');
+}
+
 // Populate campaign edit modal
 function editCampaign(id, title, description, target, raised, imageUrl, isActive) {
   const form = document.getElementById('edit-campaign-form');
@@ -88,21 +112,30 @@ function editCampaign(id, title, description, target, raised, imageUrl, isActive
   const activeCheck = form.querySelector('[name="is_active"]');
   if (activeCheck) activeCheck.checked = isActive;
   const preview = document.getElementById('edit-campaign-preview');
-  if (preview && imageUrl) { preview.src = imageUrl; preview.classList.remove('hidden'); }
+  if (preview) {
+    preview.replaceChildren();
+    if (imageUrl) {
+      setCampaignMediaPreview(preview, imageUrl, /\.(mp4|webm)(?:[?#].*)?$/i.test(imageUrl));
+    } else {
+      preview.classList.add('hidden');
+    }
+  }
   openEditModal('edit-campaign-modal');
 }
 
 // Populate gallery edit modal
-function editGallery(id, title, category, imageUrl) {
+function editGallery(button) {
+  const { galleryId, galleryTitle, galleryCategory, galleryImageUrl, galleryDescription } = button.dataset;
   const form = document.getElementById('edit-gallery-form');
   if (!form) return;
-  form.action = `/admin/gallery/${id}/edit`;
-  form.querySelector('[name="title"]').value = title;
+  form.action = `${button.dataset.collectionPath}/${galleryId}/edit`;
+  form.querySelector('[name="title"]').value = galleryTitle;
+  form.querySelector('[name="description"]').value = galleryDescription || '';
   const catSelect = form.querySelector('[name="category"]');
-  if (catSelect) catSelect.value = category;
-  form.querySelector('[name="image_url"]').value = imageUrl;
+  if (catSelect) catSelect.value = galleryCategory;
+  form.querySelector('[name="image_url"]').value = galleryImageUrl;
   const preview = document.getElementById('edit-gallery-preview');
-  if (preview && imageUrl) { preview.src = imageUrl; preview.classList.remove('hidden'); }
+  if (preview && galleryImageUrl) { preview.src = galleryImageUrl; preview.classList.remove('hidden'); }
   openEditModal('edit-gallery-modal');
 }
 

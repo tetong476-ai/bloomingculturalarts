@@ -1,36 +1,43 @@
-{% extends 'base.html' %}
-{% block title %}{{ settings.get('site_title', 'Blooming Cultural Arts') }} - Empowering Youth Through Arts{% endblock %}
+﻿{% extends 'base.html' %}
+{% block title %}{% if about_page %}About Us - {{ settings.get('site_title', 'Blooming Cultural Arts') }}{% else %}{{ settings.get('site_title', 'Blooming Cultural Arts') }} - Empowering Youth Through Arts{% endif %}{% endblock %}
 
 {% block body %}
+{% set home_url = url_for('index') %}
+{% set about_url = url_for('about') %}
+{% set campaigns_url = url_for('campaigns_page') %}
 <!-- ===== NAVIGATION ===== -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+<nav class="site-navigation fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+  <div class="max-w-none mx-auto px-6 sm:px-12 lg:px-20">
+    <div class="nav-bar-inner flex items-end justify-between min-h-16">
       <!-- Logo -->
-      <a href="#home" class="flex items-center gap-3">
-        {% if settings.get('site_logo') %}
-          <img src="{{ settings.get('site_logo') }}" alt="BCA Logo" class="h-10 w-auto object-contain">
-        {% else %}
-          <div class="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold text-lg">B</div>
-        {% endif %}
-        <span class="font-bold text-gray-800 text-lg hidden sm:block">{{ settings.get('site_title', 'BCA') }}</span>
+      <a href="{{ home_url }}#home" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/bca-header-wordmark.png') }}"
+             alt="Blooming Cultural Arts" class="nav-brand-logo object-contain">
       </a>
 
       <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center gap-6">
-        <a href="#home" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">Home</a>
-        <a href="#about" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">About Us</a>
-        <a href="#campaigns" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">Campaigns</a>
-        <a href="#gallery" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">Gallery</a>
-        <a href="#impact" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">Impact</a>
-        <a href="#contact" class="nav-link text-gray-600 hover:text-amber-500 text-sm font-medium">Contact</a>
-        <button onclick="openDonateModal()" class="btn-gold px-5 py-2 rounded-full text-sm font-semibold shadow">
-          Donate Now
-        </button>
+      <div class="hidden xl:flex nav-reference-links">
+        <a href="{{ home_url }}#home" class="nav-reference-link">Home</a>
+        <a href="{{ about_url }}" class="nav-reference-link{% if about_page %} active{% endif %}">About us</a>
+        <a href="{{ campaigns_url }}" class="nav-reference-link">Our Future Projects</a>
+        <a href="{{ home_url }}#contact" class="nav-reference-link">Contact Us</a>
+        <a href="{{ home_url }}#gallery" class="nav-reference-link">Photo Activities</a>
+      </div>
+      <div class="hidden xl:flex nav-reference-actions">
+        <div class="nav-reference-top">
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <span>KH</span><b>|</b><span>EN</span><b>|</b><span>FR</span>
+        </div>
+        <div class="nav-reference-bottom">
+          <a href="{{ url_for('join_page') }}" class="nav-reference-join">Join Us</a>
+          <a href="{{ campaigns_url }}" class="nav-reference-support">Partner With Us</a>
+          <label class="nav-reference-search"><svg aria-hidden="true" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search" aria-label="Search">
+          </label>
+        </div>
       </div>
 
       <!-- Mobile toggle -->
-      <button id="nav-toggle" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+      <button id="nav-toggle" class="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -38,124 +45,237 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden pb-4">
+    <div id="mobile-menu" class="hidden xl:hidden pb-4">
       <div class="flex flex-col gap-2">
-        <a href="#home" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Home</a>
-        <a href="#about" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">About Us</a>
-        <a href="#campaigns" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Campaigns</a>
-        <a href="#gallery" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Gallery</a>
-        <a href="#impact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Impact</a>
-        <a href="#contact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Contact</a>
-        <button onclick="openDonateModal()" class="btn-gold mx-3 py-2 rounded-full text-sm font-semibold">Donate Now</button>
+        <a href="{{ home_url }}#home" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Home</a>
+        <a href="{{ about_url }}" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">About Us</a>
+        <a href="{{ campaigns_url }}" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Campaigns</a>
+        <a href="{{ home_url }}#gallery" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Gallery</a>
+        <a href="{{ home_url }}#impact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Impact</a>
+        <a href="{{ home_url }}#contact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Contact Us</a>
+        <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-3 pt-3 text-sm">
+          <a href="{{ url_for('auth.login') }}" class="font-semibold text-gray-700 hover:text-amber-500">Login</a>
+          <div class="flex items-center gap-2 text-gray-500" aria-label="Languages">
+            <span>KH</span><span aria-hidden="true">|</span><span>EN</span><span aria-hidden="true">|</span><span>FR</span>
+          </div>
+        </div>
+        <a href="{{ url_for('join_page') }}" class="nav-reference-join mx-3">Join Us</a>
+        <a href="{{ campaigns_url }}" class="nav-reference-support mx-3">Partner With Us</a>
+        <label class="nav-reference-search mx-3"><svg aria-hidden="true" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search" aria-label="Search">
+        </label>
       </div>
     </div>
   </div>
 </nav>
 
+{% if not about_page %}
 <!-- ===== HERO ===== -->
-<section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-br from-amber-900 via-amber-700 to-green-800">
-    <div class="absolute inset-0 opacity-20" style="background-image: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600'); background-size: cover; background-position: center;"></div>
-    <div class="hero-overlay absolute inset-0"></div>
+<section id="home" class="hero-section relative overflow-hidden">
+  <div id="hero-slideshow" class="hero-slideshow" aria-live="polite">
+    <article class="hero-slide is-active">
+      <img src="/static/uploads/hero-speech-therapy-room.png" alt="Children and teachers together at Blooming Cultural Arts">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Blooming<br>Cultural Arts</h1>
+        <p class="hero-subtitle">Inspiring children and celebrating <br> culture through arts and education.</p>
+        <a href="{{ about_url }}" class="hero-button">Learn More <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </article>
+    <article class="hero-slide">
+      <img src="/static/uploads/photo_2026-10-27_22-01-12_1793114706.jpg" alt="Children celebrating Cambodian culture">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Our Mission</h1>
+        <p class="hero-subtitle">Celebrating Cambodian culture, empowering children's education, and <br> building a thriving community through the arts.</p>
+        <a href="{{ about_url }}" class="hero-button">Learn More <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </article>
+    <article class="hero-slide">
+      <img src="/static/uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg" alt="Children sharing a joyful moment">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Together, We Bring Arts<br>&amp; Hope to Rural Schools</h1>
+        <p class="hero-subtitle">Empowering Cambodian children through creative <br> cultural education and vital school support.</p>
+        <div class="hero-actions">
+          <a href="{{ campaigns_url }}" class="hero-button hero-button-primary">Partner With Us</a>
+          <a href="{{ about_url }}" class="hero-button">Learn More <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </article>
   </div>
-  <div class="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-    <div class="inline-block bg-amber-400/20 border border-amber-400/40 rounded-full px-4 py-1 text-amber-200 text-sm font-medium mb-6">
-      🌸 Cambodian Youth-Led Initiative
-    </div>
-    <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
-      {{ settings.get('hero_heading', 'Empowering Cambodian Youth Through Cultural Arts') }}
-    </h1>
-    <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed">
-      {{ settings.get('hero_subheading', 'Nurturing creativity, preserving Khmer heritage, and building brighter futures.') }}
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <button onclick="openDonateModal()" class="btn-gold px-8 py-4 rounded-full text-lg font-bold shadow-xl">
-        💛 Donate Now
-      </button>
-      <a href="#about" class="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-800 transition-all">
-        Learn More
-      </a>
-    </div>
+  <button class="hero-arrow hero-arrow-prev" type="button" aria-label="Previous slide">&lsaquo;</button>
+  <button class="hero-arrow hero-arrow-next" type="button" aria-label="Next slide">&rsaquo;</button>
+  <div class="hero-dots" role="tablist" aria-label="Hero slides">
+    <button class="hero-dot is-active" type="button" aria-label="Show slide 1" aria-selected="true"></button>
+    <button class="hero-dot" type="button" aria-label="Show slide 2" aria-selected="false"></button>
+    <button class="hero-dot" type="button" aria-label="Show slide 3" aria-selected="false"></button>
   </div>
-  <!-- Scroll indicator -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-    <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-    </svg>
+</section>
+{% endif %}
+
+{% if about_page %}
+<!-- ===== ABOUT HERO ===== -->
+<section class="about-hero">
+  <img class="about-hero-image"
+       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+       alt=""
+       onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+  <div class="about-hero-overlay"></div>
+  <div class="about-hero-content">
+    <h1>{{ settings.get('about_hero_title', 'Our Story') }}</h1>
+    <p>{{ settings.get('about_hero_subtitle', 'The Belief That Started It All &mdash; Every Child Deserves Opportunity') }}</p>
   </div>
 </section>
 
-<!-- ===== ABOUT & MISSION ===== -->
-<section id="about" class="py-20 bg-bca-pink">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <span class="text-amber-500 font-semibold text-sm uppercase tracking-wider">About Us</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-6">Who We Are</h2>
-        <p class="text-gray-600 leading-relaxed mb-6">
-          {{ settings.get('about_text', '') }}
-        </p>
-        <div class="bg-white rounded-2xl p-6 shadow-sm border-l-4 border-amber-400">
-          <h3 class="font-bold text-gray-800 mb-2">🎯 Our Mission</h3>
-          <p class="text-gray-600 text-sm leading-relaxed">{{ settings.get('mission_statement', '') }}</p>
-        </div>
+<!-- ===== ABOUT ===== -->
+<section id="about" class="about-section">
+  <div class="about-story about-story-light" style="background-color: {{ settings.get('about_background_color', '#f7f5f4') }};">
+    <div class="about-story-inner">
+      <div class="about-story-image">
+        <img src="{{ settings.get('about_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}"
+             alt="Children learning and sharing together">
       </div>
-      <div>
-        <h3 class="text-xl font-bold text-gray-800 mb-4">Our Goals</h3>
-        <ul class="space-y-3">
+      <div class="about-story-copy">
+        <p class="about-story-eyebrow">What is BCA?</p>
+        <h2 class="about-story-title">A belief that started it all</h2>
+        <p class="about-story-text">{{ settings.get('about_text', '') }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="mission" class="about-story about-story-dark" style="background-color: {{ settings.get('mission_background_color', '#687c4a') }};">
+    <div class="about-story-inner">
+      <div class="about-story-copy">
+        <p class="about-story-eyebrow">Our mission</p>
+        <h2 class="about-story-title">Growing with the community</h2>
+        <p class="about-story-text">{{ settings.get('mission_statement', '') }}</p>
+      </div>
+      <div class="about-story-image">
+        <img src="{{ settings.get('mission_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+             alt="Students and educators at a BCA learning activity">
+      </div>
+    </div>
+  </div>
+
+  <div class="about-story about-story-light about-story-goals" style="background-color: {{ settings.get('goals_background_color', '#f6b7be') }};">
+    <div class="about-story-inner">
+      <div class="about-story-image">
+        <img src="{{ settings.get('goals_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}"
+             alt="Young people celebrating Cambodian culture">
+      </div>
+      <div class="about-story-copy">
+        <p class="about-story-eyebrow">Our goals</p>
+        <h2 class="about-story-title">Creating opportunities for every child</h2>
+        <ul class="about-goals">
           {% for goal in goals %}
-          <li class="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm">
-            <span class="text-amber-500 mt-0.5 flex-shrink-0">✦</span>
-            <span class="text-gray-700 text-sm">{{ goal }}</span>
-          </li>
+          <li>{{ goal }}</li>
           {% endfor %}
         </ul>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ===== CAMPAIGNS ===== -->
-<section id="campaigns" class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <span class="text-amber-500 font-semibold text-sm uppercase tracking-wider">Support Our Work</span>
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2">Active Campaigns</h2>
-      <p class="text-gray-500 mt-3 max-w-xl mx-auto">Every contribution helps us reach more children and preserve Khmer cultural heritage.</p>
+  <section class="about-closing-banner">
+    <div class="about-closing-inner">
+      <h2>{{ settings.get('about_closing_heading', 'Celebrating Culture, Nurturing Creativity') }}</h2>
+      <p>{{ settings.get('about_closing_text', 'When cultural arts bloom in young hearts, every child gains the confidence to dream, create, and thrive.') }}</p>
     </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {% for campaign in campaigns %}
-      <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow">
-        <div class="aspect-video overflow-hidden bg-amber-50">
-          <img src="{{ campaign.image_url or 'https://via.placeholder.com/600x340/FDF2F4/EBB838?text=BCA+Campaign' }}"
-               alt="{{ campaign.title }}"
-               class="w-full h-full object-cover"
+  </section>
+</section>
+{% endif %}
+
+{% if not about_page and featured_campaign %}
+<!-- ===== FEATURED PROJECT ===== -->
+<section class="featured-project-section" aria-label="Upcoming project">
+  <div class="featured-project-card">
+    <div class="featured-project-media">
+      {% if featured_campaign.image_url %}
+        {% if featured_campaign.is_video %}
+        <video src="{{ featured_campaign.image_url }}" controls preload="metadata" playsinline></video>
+        {% else %}
+        <img src="{{ featured_campaign.image_url }}" alt="{{ featured_campaign.title }}"
+             onerror="this.src='https://via.placeholder.com/800x500/FDF2F4/EBB838?text=BCA+Project'">
+        {% endif %}
+      {% else %}
+      <div class="featured-project-placeholder" aria-hidden="true">BCA</div>
+      {% endif %}
+    </div>
+    <div class="featured-project-content">
+      <div class="featured-project-topline">
+        <a href="{{ campaigns_url }}" class="featured-project-view-all">View All Projects</a>
+      </div>
+      <p class="featured-project-label">Upcoming Project</p>
+      <h2 class="featured-project-title">{{ featured_campaign.title }}</h2>
+      <p class="featured-project-description">{{ featured_campaign.description }}</p>
+      <a href="{{ campaigns_url }}" class="featured-project-read-more">Read More <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if not about_page and settings.get('home_work_enabled', 'true') == 'true' %}
+<!-- ===== HOW WE WORK / NON-PROFIT COMMITMENT ===== -->
+<section class="how-we-work-section" aria-label="How we work and our non-profit commitment">
+  <div class="how-we-work-card">
+    <div>
+      <h2 class="how-we-work-heading">{{ settings.get('home_work_heading', 'HOW WE WORK') }} <span aria-hidden="true">&#127800;</span></h2>
+      <ul class="how-we-work-list">
+        {% for item in home_work_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="how-we-work-commitment">
+      <h2 class="how-we-work-heading">{{ settings.get('home_work_commitment_heading', 'OUR NON-PROFIT COMMITMENT') }} <span aria-hidden="true">&#127800;</span></h2>
+      <p>{{ settings.get('home_work_commitment_text', '100% Youth-Led & Community Driven') }}</p>
+      <a class="how-we-work-proposal"
+         href="mailto:{{ settings.get('contact_email', 'info@bloomingculturalarts.org') }}?subject=Request%20for%20a%20proposal">
+        {{ settings.get('home_work_button_text', 'Request Proposal') }}
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if not about_page %}
+<!-- ===== RECENT ACTIVITIES ===== -->
+<section id="recent-activities" class="bg-bca-pink py-12 md:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-2 flex items-center justify-between gap-4">
+      <p class="recent-activities-kicker text-lg tracking-wide text-[#6b7c42]">
+        <span aria-hidden="true">&#127800;</span> RECENT ACTIVITIES <span aria-hidden="true">&#127800;</span>
+      </p>
+      <a href="#gallery" class="shrink-0 rounded-md bg-[#6b7c42] px-3 py-1.5 text-sm font-bold text-white shadow hover:bg-[#596a35]">
+        View Gallery <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+    <h2 class="recent-activities-heading mb-5 text-2xl text-gray-900 md:text-3xl">
+      Highlights from our community &amp; Cultural work
+    </h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% for item in recent_activities[:3] %}
+      <article class="rounded-xl bg-[#fbe9ed] p-2.5 shadow-sm">
+        <button type="button" class="block w-full overflow-hidden rounded-lg border-2 border-[#b8c5a1] bg-white p-1"
+                onclick="openRecentActivityItem({{ item.id }})" aria-label="View {{ item.title }}">
+          <img src="{{ item.image_url }}" alt="{{ item.title }}" class="aspect-video w-full object-cover"
                onerror="this.src='https://via.placeholder.com/600x340/FDF2F4/EBB838?text=BCA'">
-        </div>
-        <div class="p-6">
-          <h3 class="font-bold text-gray-800 text-lg mb-2">{{ campaign.title }}</h3>
-          <p class="text-gray-500 text-sm mb-4 line-clamp-2">{{ campaign.description }}</p>
-          <!-- Progress -->
-          <div class="mb-4">
-            <div class="flex justify-between text-xs text-gray-500 mb-1">
-              <span>Raised: <strong class="text-amber-600">${{ "{:,.0f}".format(campaign.raised_amount) }}</strong></span>
-              <span>Goal: ${{ "{:,.0f}".format(campaign.target_amount) }}</span>
-            </div>
-            <div class="w-full bg-gray-100 rounded-full h-2.5">
-              <div class="progress-fill bg-amber-400 h-2.5 rounded-full" style="width: 0%" data-width="{{ campaign.progress_percent }}"></div>
-            </div>
-            <p class="text-right text-xs text-gray-400 mt-1">{{ campaign.progress_percent }}% funded</p>
-          </div>
-          <button onclick="openDonateModal()" class="w-full btn-gold py-2.5 rounded-xl font-semibold text-sm">
-            💛 Support This Campaign
+        </button>
+        <div class="pt-2">
+          <p class="text-sm font-bold text-[#73804d]">
+            {{ item.created_at.strftime('%B %d, %Y') if item.created_at else '' }}
+          </p>
+          <h3 class="font-serif text-base font-bold italic leading-tight text-gray-950">{{ item.title }}</h3>
+          {% if item.description %}
+          <p class="mt-1 text-sm leading-5 text-gray-800">{{ item.description }}</p>
+          {% endif %}
+          <button type="button" onclick="openRecentActivityItem({{ item.id }})"
+                  class="mt-2 text-xs font-bold text-gray-900 hover:underline">
+            Read More <span aria-hidden="true">&rarr;</span>
           </button>
         </div>
-      </div>
+      </article>
       {% else %}
-      <div class="col-span-full text-center py-16 text-gray-400">
-        <p class="text-4xl mb-3">🌱</p>
-        <p>No active campaigns at the moment. Check back soon!</p>
-      </div>
+      <p class="col-span-full py-8 text-center text-gray-500">Recent activities will appear here.</p>
       {% endfor %}
     </div>
   </div>
@@ -186,18 +306,18 @@
 </section>
 
 <!-- ===== IMPACT ===== -->
-<section id="impact" class="py-20 bg-gradient-to-br from-amber-500 to-amber-600">
+<section id="impact" class="py-20 bg-[#fff7f9]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-white">Our Impact</h2>
-      <p class="text-amber-100 mt-3">Numbers that tell our story</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Our Impact</h2>
+      <p class="text-gray-600 mt-3">Numbers that tell our story</p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       {% for stat in stats %}
-      <div class="stat-item text-center bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+      <div class="stat-item text-center bg-white rounded-2xl p-6 border border-pink-100 shadow-sm">
         <div class="text-4xl mb-2">{{ stat.icon }}</div>
-        <div class="text-3xl font-bold text-white mb-1">{{ stat.value }}</div>
-        <div class="text-amber-100 text-sm">{{ stat.label }}</div>
+        <div class="text-3xl font-bold text-gray-800 mb-1">{{ stat.value }}</div>
+        <div class="text-gray-600 text-sm">{{ stat.label }}</div>
       </div>
       {% endfor %}
     </div>
@@ -211,75 +331,58 @@
     <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-8">Contact Us</h2>
     <div class="grid sm:grid-cols-3 gap-6">
       <div class="bg-bca-pink rounded-2xl p-6">
-        <div class="text-3xl mb-3">📧</div>
+        <div class="text-3xl mb-3"></div>
         <h3 class="font-semibold text-gray-800 mb-1">Email</h3>
-        <a href="mailto:{{ settings.get('contact_email', '') }}" class="text-amber-600 text-sm hover:underline">
-          {{ settings.get('contact_email', 'info@bloomingculturalarts.org') }}
-        </a>
+        {% set contact_email = settings.get('contact_email', 'info@bloomingculturalarts.com') %}
+        {% if '@' in contact_email %}
+          <a href="mailto:{{ contact_email }}" class="text-amber-600 text-sm hover:underline">{{ contact_email }}</a>
+        {% else %}
+          <p class="text-amber-600 text-sm">{{ contact_email }}</p>
+        {% endif %}
       </div>
       <div class="bg-bca-pink rounded-2xl p-6">
-        <div class="text-3xl mb-3">📞</div>
+        <div class="text-3xl mb-3"></div>
         <h3 class="font-semibold text-gray-800 mb-1">Phone</h3>
         <p class="text-gray-600 text-sm">{{ settings.get('phone', '+855 12 345 678') }}</p>
       </div>
       <div class="bg-bca-pink rounded-2xl p-6">
-        <div class="text-3xl mb-3">📍</div>
+        <div class="text-3xl mb-3"></div>
         <h3 class="font-semibold text-gray-800 mb-1">Address</h3>
         <p class="text-gray-600 text-sm">{{ settings.get('address', 'Phnom Penh, Cambodia') }}</p>
       </div>
     </div>
     <div class="mt-10">
       <button onclick="openDonateModal()" class="btn-gold px-10 py-4 rounded-full text-lg font-bold shadow-lg">
-        💛 Make a Donation
+        Make a Donation
       </button>
     </div>
   </div>
 </section>
+<!-- ===== COLLABORATION CTA ===== -->
+{% if not about_page and settings.get('collaborate_enabled', 'true') == 'true' %}
+<section class="collaboration-cta-section" aria-labelledby="collaboration-cta-title"
+         style="--collaborate-bg-highlight: {{ settings.get('collaborate_background_highlight', '#fff8f8') }}; --collaborate-bg-midpoint: {{ settings.get('collaborate_background_midpoint', '#fce8ec') }}; --collaborate-bg-edge: {{ settings.get('collaborate_background_edge', '#f9e1e6') }};">
+  <div class="collaboration-cta">
+    <div class="collaboration-cta-copy">
+      <p class="collaboration-cta-eyebrow"><span aria-hidden="true">&#127800;</span> {{ settings.get('collaborate_eyebrow', 'Collaborate With Us') }} <span aria-hidden="true">&#127800;</span></p>
+      <h2 id="collaboration-cta-title">{{ settings.get('collaborate_heading', 'Ready to Empower Cambodian Youth & Culture Together?') }}</h2>
+      <p>{{ settings.get('collaborate_text', '') }}</p>
+    </div>
+    <a class="collaboration-cta-button"
+       href="mailto:{{ settings.get('contact_email', 'info@bloomingculturalarts.org') }}?subject=Partnership%20with%20Blooming%20Cultural%20Arts">
+      {{ settings.get('collaborate_button_text', 'Partner With Us') }}
+    </a>
+  </div>
+</section>
+{% endif %}
+{% endif %}
+
+{% include "_sponsors_section.html" %}
 
 <!-- ===== FOOTER ===== -->
-<footer class="bg-gray-900 text-gray-400 py-10">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-center md:text-left">
-        <p class="text-white font-bold text-lg">{{ settings.get('site_title', 'Blooming Cultural Arts') }}</p>
-        <p class="text-sm mt-1">Empowering Cambodian youth through cultural arts.</p>
-      </div>
-      <div class="flex gap-6 text-sm">
-        <a href="#home" class="hover:text-amber-400 transition-colors">Home</a>
-        <a href="#about" class="hover:text-amber-400 transition-colors">About</a>
-        <a href="#campaigns" class="hover:text-amber-400 transition-colors">Campaigns</a>
-        <a href="#gallery" class="hover:text-amber-400 transition-colors">Gallery</a>
-        <a href="/login" class="hover:text-amber-400 transition-colors">Admin</a>
-      </div>
-    </div>
-    <div class="border-t border-gray-800 mt-6 pt-6 text-center text-xs">
-      &copy; {{ 2024 }} {{ settings.get('site_title', 'Blooming Cultural Arts') }}. All rights reserved.
-    </div>
-  </div>
-</footer>
+{% include "_site_footer.html" %}
 
-<!-- ===== KHQR DONATION MODAL ===== -->
-<div id="khqr-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-  <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden">
-    <div class="bg-gradient-to-r from-amber-400 to-amber-500 p-6 text-center">
-      <h3 class="text-2xl font-bold text-white">💛 Donate via KHQR</h3>
-      <p class="text-amber-100 text-sm mt-1">Scan the QR code to make your donation</p>
-    </div>
-    <div class="p-6 text-center">
-      <img src="{{ settings.get('khqr_image_url', '') }}"
-           alt="KHQR Donation Code"
-           class="w-56 h-56 mx-auto rounded-xl shadow-md object-contain border-4 border-amber-100"
-           onerror="this.src='https://via.placeholder.com/300x300/FDF2F4/EBB838?text=KHQR'">
-      <p class="text-gray-600 text-sm mt-4 leading-relaxed">
-        Open your banking app, tap <strong>Scan QR</strong>, and scan the code above to donate.
-      </p>
-      <p class="text-gray-500 text-xs mt-2">All donations go directly to supporting children's arts education.</p>
-      <button id="close-khqr" class="mt-6 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold transition-colors">
-        Close
-      </button>
-    </div>
-  </div>
-</div>
+{% include "_donation_modal.html" %}
 
 <!-- ===== LIGHTBOX ===== -->
 <div id="lightbox" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
@@ -289,13 +392,15 @@
   <div class="max-w-3xl w-full mx-4">
     <img id="lb-img" src="" alt="" class="w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl">
     <div class="text-center mt-4">
+      <p id="lb-date" class="text-amber-200 text-sm"></p>
       <p id="lb-title" class="text-white font-semibold text-lg"></p>
       <span id="lb-category" class="text-amber-300 text-sm"></span>
+      <p id="lb-description" class="text-white text-sm mt-2"></p>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/main.js"></script>
+<script src="/static/js/main.js?v=20261122"></script>
 {% endblock %}

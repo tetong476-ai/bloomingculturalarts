@@ -1,0 +1,54 @@
+﻿{% extends 'base.html' %}
+{% block title %}Join Us - {{ settings.get('site_title', 'Blooming Cultural Arts') }}{% endblock %}
+
+{% block body %}
+{% set home_url = url_for('index') %}
+{% set about_url = url_for('about') %}
+{% set campaigns_url = url_for('campaigns_page') %}
+<nav class="site-navigation fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+  <div class="max-w-none mx-auto px-6 sm:px-12 lg:px-20">
+    <div class="nav-bar-inner flex items-end justify-between min-h-16">
+      <a href="{{ home_url }}#home" class="nav-brand"><img src="{{ url_for('static', filename='images/bca-header-wordmark.png') }}" alt="Blooming Cultural Arts" class="nav-brand-logo object-contain"></a>
+      <div class="hidden xl:flex nav-reference-links">
+        <a href="{{ home_url }}#home" class="nav-reference-link">Home</a>
+        <a href="{{ about_url }}" class="nav-reference-link">About us</a>
+        <a href="{{ campaigns_url }}" class="nav-reference-link">Our Future Projects</a>
+        <a href="{{ home_url }}#contact" class="nav-reference-link">Contact Us</a>
+        <a href="{{ home_url }}#gallery" class="nav-reference-link">Photo Activities</a>
+      </div>
+      <div class="hidden xl:flex nav-reference-actions">
+        <div class="nav-reference-top"><a href="{{ url_for('auth.login') }}">Login</a><span>KH</span><b>|</b><span>EN</span><b>|</b><span>FR</span></div>
+        <div class="nav-reference-bottom">
+          <a href="{{ url_for('join_page') }}" class="nav-reference-join" aria-current="page">Join Us</a>
+          <a href="{{ campaigns_url }}" class="nav-reference-support">Partner With Us</a>
+          <label class="nav-reference-search"><svg aria-hidden="true" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search" aria-label="Search"></label>
+        </div>
+      </div>
+      <button id="nav-toggle" class="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden xl:hidden pb-4">
+      <div class="flex flex-col gap-2">
+        <a href="{{ home_url }}#home" class="px-3 py-2 text-gray-600 text-sm">Home</a>
+        <a href="{{ about_url }}" class="px-3 py-2 text-gray-600 text-sm">About Us</a>
+        <a href="{{ campaigns_url }}" class="px-3 py-2 text-gray-600 text-sm">Our Future Projects</a>
+        <a href="{{ home_url }}#contact" class="px-3 py-2 text-gray-600 text-sm">Contact Us</a>
+        <a href="{{ home_url }}#gallery" class="px-3 py-2 text-gray-600 text-sm">Photo Activities</a>
+        <a href="{{ url_for('join_page') }}" class="nav-reference-join mx-3" aria-current="page">Join Us</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="join-page-main">
+  {% include "_join_content.html" %}
+</main>
+{% include "_sponsors_section.html" %}
+{% include "_site_footer.html" %}
+{% include "_donation_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/main.js?v=20261122"></script>
+{% endblock %}

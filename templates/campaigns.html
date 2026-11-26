@@ -1,0 +1,126 @@
+﻿{% extends 'base.html' %}
+{% block title %}Our Future Projects - {{ settings.get('site_title', 'Blooming Cultural Arts') }}{% endblock %}
+
+{% block body %}
+{% set home_url = url_for('index') %}
+{% set about_url = url_for('about') %}
+{% set campaigns_url = url_for('campaigns_page') %}
+<nav class="site-navigation fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+  <div class="max-w-none mx-auto px-6 sm:px-12 lg:px-20">
+    <div class="nav-bar-inner flex items-end justify-between min-h-16">
+      <a href="{{ home_url }}#home" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/bca-header-wordmark.png') }}"
+             alt="Blooming Cultural Arts" class="nav-brand-logo object-contain">
+      </a>
+      <div class="hidden xl:flex nav-reference-links">
+        <a href="{{ home_url }}#home" class="nav-reference-link">Home</a>
+        <a href="{{ about_url }}" class="nav-reference-link">About us</a>
+        <a href="{{ campaigns_url }}" class="nav-reference-link active" aria-current="page">Our Future Projects</a>
+        <a href="{{ home_url }}#contact" class="nav-reference-link">Contact Us</a>
+        <a href="{{ home_url }}#gallery" class="nav-reference-link">Photo Activities</a>
+      </div>
+      <div class="hidden xl:flex nav-reference-actions">
+        <div class="nav-reference-top">
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <span>KH</span><b>|</b><span>EN</span><b>|</b><span>FR</span>
+        </div>
+        <div class="nav-reference-bottom">
+          <a href="{{ url_for('join_page') }}" class="nav-reference-join">Join Us</a>
+          <a href="#campaigns" class="nav-reference-support">Partner With Us</a>
+          <label class="nav-reference-search"><svg aria-hidden="true" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search" aria-label="Search">
+          </label>
+        </div>
+      </div>
+      <button id="nav-toggle" class="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+              type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden xl:hidden pb-4">
+      <div class="flex flex-col gap-2">
+        <a href="{{ home_url }}#home" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Home</a>
+        <a href="{{ about_url }}" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">About Us</a>
+        <a href="{{ campaigns_url }}" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Campaigns</a>
+        <a href="{{ home_url }}#gallery" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Gallery</a>
+        <a href="{{ home_url }}#impact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Impact</a>
+        <a href="{{ home_url }}#contact" class="px-3 py-2 text-gray-600 hover:text-amber-500 text-sm">Contact Us</a>
+        <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-3 pt-3 text-sm">
+          <a href="{{ url_for('auth.login') }}" class="font-semibold text-gray-700 hover:text-amber-500">Login</a>
+          <div class="flex items-center gap-2 text-gray-500" aria-label="Languages">
+            <span>KH</span><span aria-hidden="true">|</span><span>EN</span><span aria-hidden="true">|</span><span>FR</span>
+          </div>
+        </div>
+        <a href="{{ url_for('join_page') }}" class="nav-reference-join mx-3">Join Us</a>
+        <a href="#campaigns" class="nav-reference-support mx-3">Partner With Us</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="about-hero" aria-labelledby="campaigns-hero-title">
+  <img class="about-hero-image"
+       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+       alt=""
+       onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+  <div class="about-hero-overlay"></div>
+  <div class="about-hero-content">
+    <h1 id="campaigns-hero-title">Our Future Projects</h1>
+    <p>Support Cambodian children through arts, education, and community.</p>
+  </div>
+</section>
+
+<main id="campaigns" class="min-h-screen bg-white pb-20 pt-24">
+  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-labelledby="campaigns-title">
+    <header class="mb-12 text-center">
+      <span class="text-sm font-semibold uppercase tracking-wider text-amber-500">Support Our Work</span>
+      <h1 id="campaigns-title" class="mt-2 text-3xl font-bold text-gray-800 md:text-4xl">Active Campaigns</h1>
+      <p class="mx-auto mt-3 max-w-xl text-gray-500">
+        Every contribution helps us reach more children and preserve Khmer cultural heritage.
+      </p>
+    </header>
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {% for campaign in campaigns %}
+      <article class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md transition-shadow hover:shadow-xl">
+        <div class="aspect-video overflow-hidden bg-amber-50">
+          {% if campaign.is_video %}
+          <video src="{{ campaign.image_url }}" class="h-full w-full object-cover" controls preload="metadata" playsinline></video>
+          {% else %}
+          <img src="{{ campaign.image_url or 'https://via.placeholder.com/600x340/FDF2F4/EBB838?text=BCA+Campaign' }}"
+               alt="{{ campaign.title }}" class="h-full w-full object-cover"
+               onerror="this.src='https://via.placeholder.com/600x340/FDF2F4/EBB838?text=BCA'">
+          {% endif %}
+        </div>
+        <div class="p-6">
+          <h2 class="mb-2 text-lg font-bold text-gray-800">{{ campaign.title }}</h2>
+          <p class="mb-4 line-clamp-2 text-sm text-gray-500">{{ campaign.description }}</p>
+          <div class="mb-4 flex justify-between text-xs text-gray-500">
+            <span>Raised: <strong class="text-amber-600">${{ "{:,.0f}".format(campaign.raised_amount) }}</strong></span>
+            <span>Goal: ${{ "{:,.0f}".format(campaign.target_amount) }}</span>
+          </div>
+          <button type="button" onclick="openDonateModal()"
+                  class="btn-gold w-full rounded-xl py-2.5 text-sm font-semibold">
+            Support This Campaign
+          </button>
+        </div>
+      </article>
+      {% else %}
+      <div class="col-span-full py-16 text-center text-gray-400">
+        <p class="mb-3 text-4xl" aria-hidden="true">&#127793;</p>
+        <p>No active campaigns at the moment. Check back soon!</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+{% include "_sponsors_section.html" %}
+{% include "_site_footer.html" %}
+
+{% include "_donation_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/main.js?v=20261122"></script>
+{% endblock %}

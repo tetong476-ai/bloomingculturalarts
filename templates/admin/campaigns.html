@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campaigns - BCA Admin</title>
+  <title>Our Future Projact - BCA Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/css/custom.css">
 </head>
@@ -13,11 +13,15 @@
 <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
   <div class="flex items-center gap-3">
     <a href="/admin" class="text-gray-400 hover:text-gray-600">&larr;</a>
-    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+    {% if settings.get('site_logo') %}
+      <img src="{{ settings.get('site_logo') }}" alt="Blooming Cultural Arts logo" class="w-8 h-8 object-contain rounded-lg">
+    {% else %}
+      <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+    {% endif %}
     <span class="font-bold text-gray-800">Campaign Manager</span>
   </div>
   <div class="flex items-center gap-4">
-    <a href="/" target="_blank" class="text-sm text-gray-500 hover:text-amber-500">🌐 View Site</a>
+    <a href="{{ url_for('index') }}" target="_self" class="text-sm text-gray-500 hover:text-amber-500">🌐 View Site</a>
     <a href="/logout" class="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg">Logout</a>
   </div>
 </header>
@@ -32,7 +36,7 @@
   {% endwith %}
 
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">📊 Campaigns</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Our Future Projact</h1>
     <button onclick="openEditModal('add-campaign-modal')" class="btn-gold px-5 py-2.5 rounded-xl font-semibold text-sm shadow">
       + New Campaign
     </button>
@@ -56,9 +60,13 @@
           <tr class="hover:bg-gray-50 transition-colors">
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
+                {% if c.is_video %}
+                <video src="{{ c.image_url }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0" muted playsinline></video>
+                {% else %}
                 <img src="{{ c.image_url or 'https://via.placeholder.com/48x48/FDF2F4/EBB838?text=BCA' }}"
                      alt="" class="w-12 h-12 rounded-xl object-cover flex-shrink-0"
                      onerror="this.src='https://via.placeholder.com/48x48/FDF2F4/EBB838?text=BCA'">
+                {% endif %}
                 <div>
                   <p class="font-semibold text-gray-800">{{ c.title }}</p>
                   <p class="text-gray-400 text-xs line-clamp-1 max-w-xs">{{ c.description }}</p>
@@ -145,14 +153,15 @@
         </div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Cover Image (upload)</label>
-        <input type="file" name="image_file" accept="image/*" data-preview="add-campaign-preview"
+        <label class="block text-sm font-medium text-gray-600 mb-1">Photo or Video (upload)</label>
+        <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp,.svg,.mp4,.webm" data-preview="add-campaign-preview" data-preview-type="campaign-media"
                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
-        <img id="add-campaign-preview" src="" class="hidden mt-2 w-full h-32 object-cover rounded-xl border">
+        <p class="mt-1 text-xs text-gray-400">Choose one photo or MP4/WebM video (max 500 MB).</p>
+        <div id="add-campaign-preview" class="hidden mt-2"></div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Or Image URL</label>
-        <input type="text" name="image_url" placeholder="https://..."
+        <label class="block text-sm font-medium text-gray-600 mb-1">Or Direct Photo/Video URL</label>
+        <input type="text" name="image_url" placeholder="https://.../photo.jpg or video.mp4"
                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
       </div>
       <div class="flex items-center gap-2">
@@ -198,14 +207,15 @@
         </div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">New Cover Image (upload)</label>
-        <input type="file" name="image_file" accept="image/*" data-preview="edit-campaign-preview"
+        <label class="block text-sm font-medium text-gray-600 mb-1">New Photo or Video (upload)</label>
+        <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp,.svg,.mp4,.webm" data-preview="edit-campaign-preview" data-preview-type="campaign-media"
                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
-        <img id="edit-campaign-preview" src="" class="hidden mt-2 w-full h-32 object-cover rounded-xl border">
+        <p class="mt-1 text-xs text-gray-400">Choose one photo or MP4/WebM video (max 500 MB).</p>
+        <div id="edit-campaign-preview" class="hidden mt-2"></div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Or Image URL</label>
-        <input type="text" name="image_url" placeholder="https://..."
+        <label class="block text-sm font-medium text-gray-600 mb-1">Or Direct Photo/Video URL</label>
+        <input type="text" name="image_url" placeholder="https://.../photo.jpg or video.mp4"
                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
       </div>
       <div class="flex items-center gap-2">

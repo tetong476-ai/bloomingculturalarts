@@ -1,0 +1,30 @@
+<!-- ===== PARTNERS ===== -->
+<section class="bca-sponsors" aria-labelledby="bca-sponsors-title">
+  <div class="mx-auto max-w-7xl px-5 py-10 sm:px-6 lg:px-8">
+    <h2 class="text-center text-2xl font-bold text-gray-900">{{ settings.get('partners_heading', 'Our Partners') }}</h2>
+    <div class="bca-featured-sponsors" aria-label="Featured partner organizations">
+      {% for partner in partners if partner.image_url %}
+      <img src="{{ partner.image_url }}" alt="{{ partner.name }}">
+      {% endfor %}
+    </div>
+    <h2 id="bca-sponsors-title" class="bca-sponsors-title text-center text-2xl font-bold text-gray-900">{{ settings.get('sponsors_heading', 'Our Sponsors') }}</h2>
+  </div>
+  <div class="bca-sponsor-marquee" aria-label="Our sponsor organizations">
+    <div class="bca-sponsor-track">
+      <div class="bca-sponsor-group">
+        {% for repeat in range(4) %}
+          {% for sponsor in sponsors if sponsor.image_url %}
+          <div class="bca-sponsor-card"><img src="{{ sponsor.image_url }}" alt="{{ sponsor.name }}"></div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+      <div class="bca-sponsor-group" aria-hidden="true">
+        {% for repeat in range(4) %}
+          {% for sponsor in sponsors if sponsor.image_url %}
+          <div class="bca-sponsor-card"><img src="{{ sponsor.image_url }}" alt=""></div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>

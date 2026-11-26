@@ -113,7 +113,7 @@ bca_app/
     ├── index.html            # Public homepage
     ├── login.html            # Admin login page
     └── admin/
-        ├── dashboard.html    # Admin control panel (settings + stats)
+        ├── dashboard.html    # Admin control panel (site, About, partners/sponsors, stats)
         ├── campaigns.html    # Campaign CRUD manager
         └── gallery.html      # Gallery CRUD manager
 ```
@@ -137,7 +137,7 @@ bca_app/
 | Page | URL | Description |
 |------|-----|-------------|
 | Login | `/login` | Admin authentication |
-| Dashboard | `/admin` | Site settings + stats |
+| Dashboard | `/admin` | Site, About, independent Partners and Sponsors settings + stats |
 | Campaigns | `/admin/campaigns` | Full campaign CRUD |
 | Gallery | `/admin/gallery` | Full gallery CRUD |
 
@@ -155,6 +155,17 @@ bca_app/
 ---
 
 ## 🚀 Production Deployment
+
+### Deploy on Render
+
+1. Push this project to a GitHub or GitLab repository.
+2. In Render, choose **New → Blueprint**, connect the repository, and let Render read `render.yaml`.
+3. Create the Blueprint resources and wait for the web service to finish its first deploy. Render will provide an `onrender.com` URL.
+4. Open `/login` and change the seeded admin password (`admin` / `admin123`) immediately.
+
+The included Blueprint uses Render's free web service and free PostgreSQL database for a trial. Free web services sleep when idle, and free PostgreSQL databases expire after 30 days. Uploaded files are stored on the service's temporary filesystem and can disappear on restarts or deploys. For a lasting public site, choose a paid PostgreSQL plan and attach a persistent disk mounted at `/opt/render/project/src/static/uploads` to a paid web service, or move uploads to object storage.
+
+Set `VONAGE_API_KEY`, `VONAGE_API_SECRET`, and optionally `VONAGE_BRAND_NAME` in the Render service's environment if you need SMS password recovery. Never commit `.env` or production secrets.
 
 ### Using Gunicorn
 

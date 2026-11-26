@@ -10,13 +10,17 @@
 <body class="bg-gray-50 min-h-screen">
 
 <!-- ===== TOP BAR ===== -->
-<header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+<header class="admin-header bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
   <div class="flex items-center gap-3">
-    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+    {% if settings.get('site_logo') %}
+      <img src="{{ settings.get('site_logo') }}" alt="Blooming Cultural Arts logo" class="w-8 h-8 object-contain rounded-lg">
+    {% else %}
+      <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center text-white font-bold text-sm">B</div>
+    {% endif %}
     <span class="font-bold text-gray-800">BCA Admin Panel</span>
   </div>
-  <div class="flex items-center gap-4">
-    <a href="/" target="_blank" class="text-sm text-gray-500 hover:text-amber-500 transition-colors">
+  <div class="admin-header-actions flex items-center gap-4">
+    <a href="{{ url_for('index') }}" target="_self" class="text-sm text-gray-500 hover:text-amber-500 transition-colors">
       🌐 View Site
     </a>
     <span class="text-sm text-gray-600">Hello, <strong>{{ current_user.username }}</strong></span>
@@ -26,30 +30,45 @@
   </div>
 </header>
 
-<div class="flex">
+<div class="admin-layout flex">
 
 <!-- ===== SIDEBAR ===== -->
-<aside class="w-56 bg-white border-r border-gray-200 min-h-screen p-4 flex-shrink-0">
-  <nav class="space-y-1">
+<aside class="admin-sidebar w-56 bg-white border-r border-gray-200 min-h-screen p-4 flex-shrink-0">
+  <nav class="admin-nav space-y-1">
     <button data-tab="tab-settings" onclick="showTab('tab-settings')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
       ⚙️ Site Settings
     </button>
+    <button data-tab="tab-collaborate" onclick="showTab('tab-collaborate')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
+      Collaborate
+    </button>
+    <button data-tab="tab-about" onclick="showTab('tab-about')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
+      About Us
+    </button>
+    <button data-tab="tab-partners" onclick="showTab('tab-partners')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
+      Partners & Sponsors
+    </button>
     <a href="/admin/campaigns" class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all">
-      📊 Campaigns
+      Campaigns
     </a>
     <a href="/admin/gallery" class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all">
-      🖼️ Gallery
+      Gallery
+    </a>
+    <a href="/admin/recent-activities" class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all">
+      Recent Activities
+    </a>
+    <a href="{{ url_for('admin.donations') }}" class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all">
+      Donations
     </a>
     <button data-tab="tab-stats" onclick="showTab('tab-stats')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
-      📈 Impact Stats
+      Impact Stats
     </button>
     <button data-tab="tab-password" onclick="showTab('tab-password')" class="tab-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
-      🔒 Change Password
+      Change Password
     </button>
   </nav>
 
   <!-- Quick Stats -->
-  <div class="mt-8 space-y-2">
+  <div class="admin-quick-stats mt-8 space-y-2">
     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">Overview</p>
     <div class="bg-amber-50 rounded-xl p-3 text-center">
       <p class="text-2xl font-bold text-amber-600">{{ campaigns_count or 0 }}</p>
@@ -59,6 +78,10 @@
       <p class="text-2xl font-bold text-pink-600">{{ gallery_count or 0 }}</p>
       <p class="text-xs text-gray-500">Gallery Items</p>
     </div>
+    <div class="bg-rose-50 rounded-xl p-3 text-center">
+      <p class="text-2xl font-bold text-rose-600">{{ recent_activities_count or 0 }}</p>
+      <p class="text-xs text-gray-500">Recent Activities</p>
+    </div>
     <div class="bg-green-50 rounded-xl p-3 text-center">
       <p class="text-2xl font-bold text-green-600">{{ stats_count or 0 }}</p>
       <p class="text-xs text-gray-500">Impact Stats</p>
@@ -67,7 +90,7 @@
 </aside>
 
 <!-- ===== MAIN CONTENT ===== -->
-<main class="flex-1 p-6 overflow-auto">
+<main class="admin-main min-w-0 flex-1 p-6 overflow-auto">
 
   <!-- Flash Messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -85,7 +108,7 @@
     <form method="POST" action="/admin/settings" enctype="multipart/form-data" class="space-y-6">
 
       <!-- Basic Info -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
         <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">Basic Information</h3>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
@@ -95,7 +118,8 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-600 mb-1">Contact Email</label>
-            <input type="email" name="contact_email" value="{{ settings.get('contact_email', '') }}"
+            <input type="text" name="contact_email" value="{{ settings.get('contact_email', '') }}"
+                   inputmode="email"
                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
           </div>
           <div>
@@ -111,10 +135,29 @@
         </div>
       </div>
 
+      <!-- Social Media Links -->
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">Social Media Links</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Facebook URL</label>
+            <input type="url" name="facebook_url" value="{{ settings.get('facebook_url', '') }}"
+                   placeholder="https://web.facebook.com/..."
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">TikTok URL</label>
+            <input type="url" name="tiktok_url" value="{{ settings.get('tiktok_url', '') }}"
+                   placeholder="https://www.tiktok.com/@..."
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+        </div>
+      </div>
+
       <!-- Logo -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
         <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">Site Logo</h3>
-        <div class="flex items-start gap-6">
+        <div class="admin-media-row flex items-start gap-6">
           {% if settings.get('site_logo') %}
           <img src="{{ settings.get('site_logo') }}" alt="Current Logo" class="w-20 h-20 object-contain rounded-xl border border-gray-200">
           {% endif %}
@@ -136,7 +179,7 @@
       </div>
 
       <!-- Hero Content -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
         <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">Hero Section</h3>
         <div class="space-y-4">
           <div>
@@ -152,32 +195,61 @@
         </div>
       </div>
 
-      <!-- About & Mission -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">About & Mission</h3>
+      <!-- How We Work Banner -->
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">How We Work Banner</h3>
         <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">About Text</label>
-            <textarea name="about_text" rows="4"
-                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('about_text', '') }}</textarea>
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700">
+            <input type="checkbox" name="home_work_enabled" value="true"
+                   {% if settings.get('home_work_enabled', 'true') == 'true' %}checked{% endif %}
+                   class="rounded border-gray-300 text-pink-600 focus:ring-pink-500">
+            Show this banner on the website
+          </label>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">How We Work Heading</label>
+              <input type="text" name="home_work_heading" value="{{ settings.get('home_work_heading', 'HOW WE WORK') }}"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">Commitment Heading</label>
+              <input type="text" name="home_work_commitment_heading" value="{{ settings.get('home_work_commitment_heading', 'OUR NON-PROFIT COMMITMENT') }}"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Mission Statement</label>
-            <textarea name="mission_statement" rows="3"
-                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('mission_statement', '') }}</textarea>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">Work Areas (one per line)</label>
+              <textarea name="home_work_items_raw" rows="6"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-y">{{ home_work_items_raw }}</textarea>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Commitment Text</label>
+                <input type="text" name="home_work_commitment_text"
+                       value="{{ settings.get('home_work_commitment_text', '100% Youth-Led & Community Driven') }}"
+                       class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Button Text</label>
+                <input type="text" name="home_work_button_text"
+                       value="{{ settings.get('home_work_button_text', 'Request Proposal') }}"
+                       class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Goals (one per line)</label>
-            <textarea name="goals_raw" rows="6"
-                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none font-mono">{{ goals_raw or '' }}</textarea>
-          </div>
+          <button type="submit" formmethod="post" formaction="{{ url_for('admin.home_work_banner_delete') }}"
+                  onclick="return confirm('Remove this banner from the public website?')"
+                  class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100">
+            Delete Banner from Website
+          </button>
         </div>
       </div>
 
       <!-- KHQR -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
         <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">KHQR Donation Code</h3>
-        <div class="flex items-start gap-6">
+        <div class="admin-media-row flex items-start gap-6">
           <img src="{{ settings.get('khqr_image_url', '') }}"
                alt="KHQR" class="w-32 h-32 object-contain rounded-xl border border-gray-200"
                onerror="this.src='https://via.placeholder.com/128x128/FDF2F4/EBB838?text=KHQR'">
@@ -199,15 +271,305 @@
       </div>
 
       <button type="submit" class="btn-gold px-8 py-3 rounded-xl font-semibold shadow-md">
-        💾 Save All Settings
+        Save All Settings
       </button>
     </form>
   </div>
 
+  <!-- ===== TAB: COLLABORATE ===== -->
+  <div id="tab-collaborate" class="admin-tab hidden">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">Collaborate</h2>
+    <form method="POST" action="/admin/collaborate-settings" class="space-y-6">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+        <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 mb-5">
+          <input type="checkbox" name="collaborate_enabled" value="true"
+                 {% if settings.get('collaborate_enabled', 'true') == 'true' %}checked{% endif %}
+                 class="rounded border-gray-300 text-pink-600 focus:ring-pink-500">
+          Show this section on the website
+        </label>
+        <div class="space-y-4">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">Small Heading</label>
+              <input type="text" name="collaborate_eyebrow"
+                     value="{{ settings.get('collaborate_eyebrow', 'Collaborate With Us') }}"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">Button Text</label>
+              <input type="text" name="collaborate_button_text"
+                     value="{{ settings.get('collaborate_button_text', 'Partner With Us') }}"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Main Heading</label>
+            <input type="text" name="collaborate_heading"
+                   value="{{ settings.get('collaborate_heading', 'Ready to Empower Cambodian Youth & Culture Together?') }}"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+            <textarea name="collaborate_text" rows="3"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-y">{{ settings.get('collaborate_text', '') }}</textarea>
+          </div>
+          <div>
+            <p class="block text-sm font-medium text-gray-600 mb-1">Background Gradient</p>
+            <p class="text-xs text-gray-500 mb-3">Choose the highlight, middle, and edge colors for the background.</p>
+            <div class="grid gap-4 sm:grid-cols-3">
+              <label class="block text-sm text-gray-600">
+                Highlight
+                <input type="color" name="collaborate_background_highlight"
+                       value="{{ settings.get('collaborate_background_highlight', '#fff8f8') }}"
+                       class="mt-1 h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+              <label class="block text-sm text-gray-600">
+                Middle
+                <input type="color" name="collaborate_background_midpoint"
+                       value="{{ settings.get('collaborate_background_midpoint', '#fce8ec') }}"
+                       class="mt-1 h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+              <label class="block text-sm text-gray-600">
+                Edge
+                <input type="color" name="collaborate_background_edge"
+                       value="{{ settings.get('collaborate_background_edge', '#f9e1e6') }}"
+                       class="mt-1 h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn-gold px-8 py-3 rounded-xl font-semibold shadow-md">
+        Save Collaborate
+      </button>
+    </form>
+    <form method="POST" action="/admin/collaborate/delete" class="confirm-delete mt-3">
+      <button type="submit" class="rounded-xl bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-100">
+        Delete Collaborate Section
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== TAB: ABOUT US ===== -->
+  <div id="tab-about" class="admin-tab hidden">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">About Us</h2>
+    <form method="POST" action="/admin/about-settings" enctype="multipart/form-data" class="space-y-6">
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">About Page Hero</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-3">
+            <input type="text" name="about_hero_title" value="{{ settings.get('about_hero_title', '') }}"
+                   placeholder="Hero heading"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            <textarea name="about_hero_subtitle" rows="2" placeholder="Hero subtitle"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('about_hero_subtitle', '') }}</textarea>
+          </div>
+          <div class="space-y-2">
+            <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+                 alt="Current About hero photo" class="w-full h-28 object-cover rounded-lg border"
+                 onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+            <input type="file" name="about_hero_image_file" accept="image/*" data-preview="about-hero-image-preview"
+                   class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+            <img id="about-hero-image-preview" src="" alt="New About hero photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
+            <input type="text" name="about_hero_image_url" value="{{ settings.get('about_hero_image_url', '') }}" placeholder="Or paste hero image URL"
+                   class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+        </div>
+      </div>
+      <!-- About & Mission -->
+      <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-4 pb-2 border-b">About & Mission</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-sm font-semibold text-gray-700 mb-3">Section Background Colors</h4>
+            <div class="grid gap-4 sm:grid-cols-3">
+              <label class="block text-sm text-gray-600">About section
+                <input type="color" name="about_background_color" value="{{ settings.get('about_background_color', '#f7f5f4') }}" class="mt-1 block h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+              <label class="block text-sm text-gray-600">Mission section
+                <input type="color" name="mission_background_color" value="{{ settings.get('mission_background_color', '#687c4a') }}" class="mt-1 block h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+              <label class="block text-sm text-gray-600">Goals section
+                <input type="color" name="goals_background_color" value="{{ settings.get('goals_background_color', '#f6b7be') }}" class="mt-1 block h-10 w-full cursor-pointer rounded-lg border border-gray-200 p-1">
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">About Text</label>
+            <textarea name="about_text" rows="4"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('about_text', '') }}</textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Mission Statement</label>
+            <textarea name="mission_statement" rows="3"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('mission_statement', '') }}</textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Goals (one per line)</label>
+            <textarea name="goals_raw" rows="6"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none font-mono">{{ goals_raw or '' }}</textarea>
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3">Closing Message</h4>
+            <div class="space-y-3">
+              <input type="text" name="about_closing_heading" value="{{ settings.get('about_closing_heading', '') }}"
+                     placeholder="Heading"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              <textarea name="about_closing_text" rows="2" placeholder="Supporting text"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('about_closing_text', '') }}</textarea>
+            </div>
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3">About Page Photos</h4>
+            <div class="grid gap-4 md:grid-cols-3">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-600">About photo</label>
+                <img src="{{ settings.get('about_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}"
+                     alt="Current About photo" class="w-full h-28 object-cover rounded-lg border"
+                     onerror="this.src='{{ url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}'">
+                <input type="file" name="about_image_file" accept="image/*" data-preview="about-image-preview"
+                       class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+                <img id="about-image-preview" src="" alt="New About photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
+                <input type="text" name="about_image_url" value="{{ settings.get('about_image_url', '') }}" placeholder="Or paste image URL"
+                       class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-600">Mission photo</label>
+                <img src="{{ settings.get('mission_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+                     alt="Current Mission photo" class="w-full h-28 object-cover rounded-lg border"
+                     onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+                <input type="file" name="mission_image_file" accept="image/*" data-preview="mission-image-preview"
+                       class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+                <img id="mission-image-preview" src="" alt="New Mission photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
+                <input type="text" name="mission_image_url" value="{{ settings.get('mission_image_url', '') }}" placeholder="Or paste image URL"
+                       class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-600">Goals photo</label>
+                <img src="{{ settings.get('goals_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}"
+                     alt="Current Goals photo" class="w-full h-28 object-cover rounded-lg border"
+                     onerror="this.src='{{ url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}'">
+                <input type="file" name="goals_image_file" accept="image/*" data-preview="goals-image-preview"
+                       class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+                <img id="goals-image-preview" src="" alt="New Goals photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
+                <input type="text" name="goals_image_url" value="{{ settings.get('goals_image_url', '') }}" placeholder="Or paste image URL"
+                       class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-gold px-8 py-3 rounded-xl font-semibold shadow-md">
+        Save About Us
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== TAB: PARTNERS & SPONSORS ===== -->
+  <div id="tab-partners" class="admin-tab hidden">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">Partners & Sponsors</h2>
+    <div class="space-y-8">
+      <form method="POST" action="/admin/partners-settings" enctype="multipart/form-data" class="space-y-6">
+        <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+          <div class="mb-5">
+            <h3 class="font-semibold text-gray-700 mb-2">Partners</h3>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Partners Heading</label>
+            <input type="text" name="partners_heading" value="{{ settings.get('partners_heading', 'Our Partners') }}"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+          <div class="grid gap-6 md:grid-cols-3">
+            {% for partner in partners %}
+            <div class="space-y-3">
+              {% if not partner.image_url %}
+              <p class="text-sm font-semibold text-gray-700">Add another partner logo (optional)</p>
+              <div class="flex h-24 items-center justify-center rounded-lg border border-dashed border-gray-300 text-xs text-gray-400">
+                No logo added yet
+              </div>
+              {% else %}
+              <img src="{{ partner.image_url }}" alt="Current {{ partner.name }} logo"
+                   class="w-full h-24 object-contain rounded-lg border border-gray-200 p-2">
+              {% endif %}
+              <input type="text" name="partner_{{ partner.number }}_name" value="{{ partner.name }}"
+                     placeholder="Organization name"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              <input type="file" name="partner_{{ partner.number }}_image_file" accept="image/*"
+                     data-preview="partner-{{ partner.number }}-preview"
+                     class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+              <img id="partner-{{ partner.number }}-preview" src="" alt="New logo preview"
+                   class="hidden w-full h-24 object-contain rounded-lg border border-gray-200 p-2">
+              <input type="text" name="partner_{{ partner.number }}_image_url" value="{{ partner.image_url }}"
+                     placeholder="Or paste logo image URL"
+                     class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              {% if partner.image_url %}
+              <label class="inline-flex items-center gap-2 text-sm text-red-600">
+                <input type="checkbox" name="partner_{{ partner.number }}_delete" value="1"
+                       class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                Delete this partner when saved
+              </label>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <button type="submit" class="btn-gold px-8 py-3 rounded-xl font-semibold shadow-md">
+          Save Partners
+        </button>
+      </form>
+
+      <form method="POST" action="/admin/sponsors-settings" enctype="multipart/form-data" class="space-y-6">
+        <div class="admin-settings-card bg-white rounded-2xl p-6 shadow-sm">
+          <div class="mb-5">
+            <h3 class="font-semibold text-gray-700 mb-2">Sponsors</h3>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Sponsors Heading</label>
+            <input type="text" name="sponsors_heading" value="{{ settings.get('sponsors_heading', 'Our Sponsors') }}"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+          </div>
+          <div class="grid gap-6 md:grid-cols-3">
+            {% for sponsor in sponsors %}
+            <div class="space-y-3">
+              {% if not sponsor.image_url %}
+              <p class="text-sm font-semibold text-gray-700">Add another sponsor logo (optional)</p>
+              <div class="flex h-24 items-center justify-center rounded-lg border border-dashed border-gray-300 text-xs text-gray-400">
+                No logo added yet
+              </div>
+              {% else %}
+              <img src="{{ sponsor.image_url }}" alt="Current {{ sponsor.name }} logo"
+                   class="w-full h-24 object-contain rounded-lg border border-gray-200 p-2">
+              {% endif %}
+              <input type="text" name="sponsor_{{ sponsor.number }}_name" value="{{ sponsor.name }}"
+                     placeholder="Organization name"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              <input type="file" name="sponsor_{{ sponsor.number }}_image_file" accept="image/*"
+                     data-preview="sponsor-{{ sponsor.number }}-preview"
+                     class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
+              <img id="sponsor-{{ sponsor.number }}-preview" src="" alt="New logo preview"
+                   class="hidden w-full h-24 object-contain rounded-lg border border-gray-200 p-2">
+              <input type="text" name="sponsor_{{ sponsor.number }}_image_url" value="{{ sponsor.image_url }}"
+                     placeholder="Or paste logo image URL"
+                     class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+              {% if sponsor.image_url %}
+              <label class="inline-flex items-center gap-2 text-sm text-red-600">
+                <input type="checkbox" name="sponsor_{{ sponsor.number }}_delete" value="1"
+                       class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                Delete this sponsor when saved
+              </label>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <button type="submit" class="btn-gold px-8 py-3 rounded-xl font-semibold shadow-md">
+          Save Sponsors
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- ===== TAB: IMPACT STATS ===== -->
   <div id="tab-stats" class="admin-tab hidden">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-gray-800">📈 Impact Stats</h2>
+    <div class="admin-section-heading flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800"> Impact Stats</h2>
       <button onclick="openEditModal('add-stat-modal')" class="btn-gold px-4 py-2 rounded-xl text-sm font-semibold">
         + Add Stat
       </button>
@@ -241,7 +603,7 @@
 
   <!-- ===== TAB: CHANGE PASSWORD ===== -->
   <div id="tab-password" class="admin-tab hidden">
-    <h2 class="text-xl font-bold text-gray-800 mb-6">🔒 Change Password</h2>
+    <h2 class="text-xl font-bold text-gray-800 mb-6"> Change Password</h2>
     <div class="bg-white rounded-2xl p-6 shadow-sm max-w-md">
       <form method="POST" action="/admin/change-password" class="space-y-4">
         <div>
@@ -271,7 +633,7 @@
 
 <!-- ===== ADD STAT MODAL ===== -->
 <div id="add-stat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
+  <div class="admin-modal-card bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-bold text-gray-800">Add Impact Stat</h3>
       <button onclick="closeEditModal('add-stat-modal')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
@@ -302,7 +664,7 @@
 
 <!-- ===== EDIT STAT MODAL ===== -->
 <div id="edit-stat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
+  <div class="admin-modal-card bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-bold text-gray-800">Edit Impact Stat</h3>
       <button onclick="closeEditModal('edit-stat-modal')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
