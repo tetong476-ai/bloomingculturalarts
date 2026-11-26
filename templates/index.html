@@ -117,9 +117,9 @@
 <!-- ===== ABOUT HERO ===== -->
 <section class="about-hero">
   <img class="about-hero-image"
-       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='images/hero-home.png') }}"
        alt=""
-       onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+       onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
   <div class="about-hero-overlay"></div>
   <div class="about-hero-content">
     <h1>{{ settings.get('about_hero_title', 'Our Story') }}</h1>
@@ -132,8 +132,9 @@
   <div class="about-story about-story-light" style="background-color: {{ settings.get('about_background_color', '#f7f5f4') }};">
     <div class="about-story-inner">
       <div class="about-story-image">
-        <img src="{{ settings.get('about_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}"
-             alt="Children learning and sharing together">
+        <img src="{{ settings.get('about_image_url') or url_for('static', filename='images/hero-hope.jpg') }}"
+             alt="Children learning and sharing together"
+             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-hope.jpg') }}'">
       </div>
       <div class="about-story-copy">
         <p class="about-story-eyebrow">What is BCA?</p>
@@ -151,8 +152,9 @@
         <p class="about-story-text">{{ settings.get('mission_statement', '') }}</p>
       </div>
       <div class="about-story-image">
-        <img src="{{ settings.get('mission_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
-             alt="Students and educators at a BCA learning activity">
+        <img src="{{ settings.get('mission_image_url') or url_for('static', filename='images/hero-home.png') }}"
+             alt="Students and educators at a BCA learning activity"
+             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
       </div>
     </div>
   </div>
@@ -160,8 +162,9 @@
   <div class="about-story about-story-light about-story-goals" style="background-color: {{ settings.get('goals_background_color', '#f6b7be') }};">
     <div class="about-story-inner">
       <div class="about-story-image">
-        <img src="{{ settings.get('goals_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}"
-             alt="Young people celebrating Cambodian culture">
+        <img src="{{ settings.get('goals_image_url') or url_for('static', filename='images/hero-mission.jpg') }}"
+             alt="Young people celebrating Cambodian culture"
+             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-mission.jpg') }}'">
       </div>
       <div class="about-story-copy">
         <p class="about-story-eyebrow">Our goals</p>

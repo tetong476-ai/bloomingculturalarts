@@ -1,5 +1,5 @@
 <section id="join" class="join-page-hero" aria-labelledby="join-page-title">
-  <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}" alt="Children sharing a joyful moment">
+  <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='images/hero-home.png') }}" alt="Children sharing a joyful moment" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
   <div class="join-page-hero-overlay"></div>
   <div class="join-page-hero-content">
     <p>Join Us</p>

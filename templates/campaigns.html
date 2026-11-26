@@ -61,9 +61,9 @@
 
 <section class="about-hero" aria-labelledby="campaigns-hero-title">
   <img class="about-hero-image"
-       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+       src="{{ settings.get('about_hero_image_url') or url_for('static', filename='images/hero-home.png') }}"
        alt=""
-       onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+       onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
   <div class="about-hero-overlay"></div>
   <div class="about-hero-content">
     <h1 id="campaigns-hero-title">Our Future Projects</h1>

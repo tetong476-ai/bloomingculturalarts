@@ -365,9 +365,9 @@
                       class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none">{{ settings.get('about_hero_subtitle', '') }}</textarea>
           </div>
           <div class="space-y-2">
-            <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+            <img src="{{ settings.get('about_hero_image_url') or url_for('static', filename='images/hero-home.png') }}"
                  alt="Current About hero photo" class="w-full h-28 object-cover rounded-lg border"
-                 onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
             <input type="file" name="about_hero_image_file" accept="image/*" data-preview="about-hero-image-preview"
                    class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
             <img id="about-hero-image-preview" src="" alt="New About hero photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
@@ -424,9 +424,9 @@
             <div class="grid gap-4 md:grid-cols-3">
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-600">About photo</label>
-                <img src="{{ settings.get('about_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}"
+                <img src="{{ settings.get('about_image_url') or url_for('static', filename='images/hero-hope.jpg') }}"
                      alt="Current About photo" class="w-full h-28 object-cover rounded-lg border"
-                     onerror="this.src='{{ url_for('static', filename='uploads/photo_2026-10-27_22-01-13_6_1793114836.jpg') }}'">
+                     onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-hope.jpg') }}'">
                 <input type="file" name="about_image_file" accept="image/*" data-preview="about-image-preview"
                        class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
                 <img id="about-image-preview" src="" alt="New About photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
@@ -435,9 +435,9 @@
               </div>
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-600">Mission photo</label>
-                <img src="{{ settings.get('mission_image_url') or url_for('static', filename='uploads/hero-speech-therapy-room.png') }}"
+                <img src="{{ settings.get('mission_image_url') or url_for('static', filename='images/hero-home.png') }}"
                      alt="Current Mission photo" class="w-full h-28 object-cover rounded-lg border"
-                     onerror="this.src='{{ url_for('static', filename='uploads/hero-speech-therapy-room.png') }}'">
+                     onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-home.png') }}'">
                 <input type="file" name="mission_image_file" accept="image/*" data-preview="mission-image-preview"
                        class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
                 <img id="mission-image-preview" src="" alt="New Mission photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
@@ -446,9 +446,9 @@
               </div>
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-600">Goals photo</label>
-                <img src="{{ settings.get('goals_image_url') or url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}"
+                <img src="{{ settings.get('goals_image_url') or url_for('static', filename='images/hero-mission.jpg') }}"
                      alt="Current Goals photo" class="w-full h-28 object-cover rounded-lg border"
-                     onerror="this.src='{{ url_for('static', filename='uploads/photo_2026-10-27_22-01-12_1793114706.jpg') }}'">
+                     onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero-mission.jpg') }}'">
                 <input type="file" name="goals_image_file" accept="image/*" data-preview="goals-image-preview"
                        class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-amber-50 file:text-amber-700">
                 <img id="goals-image-preview" src="" alt="New Goals photo preview" class="hidden w-full h-28 object-cover rounded-lg border">
